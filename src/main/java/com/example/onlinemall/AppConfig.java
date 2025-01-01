@@ -10,22 +10,28 @@ import com.example.onlinemall.member.MemberServiceImpl;
 import com.example.onlinemall.member.MemoryMemberRepository;
 import com.example.onlinemall.order.OrderService;
 import com.example.onlinemall.order.OrderServiceImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration //스프링 빈과 관련된 설정을 알리는 annotation
 public class AppConfig {
+    @Bean  // 빈, 정의된 클래스
     public MemberRepository memberRepository() {
         return new MemoryMemberRepository();
     }
 
-    public DiscountPolicy discountPolicy(DiscountMethod discountMethod) {
-        if (discountMethod == DiscountMethod.FIXED) return new FixedDiscountPolicy();
-        else return new RateDiscountPolicy();
+    @Bean
+    public DiscountPolicy discountPolicy() {
+        return new FixedDiscountPolicy();
     }
 
+    @Bean
     public MemberService memberService() {
         return new MemberServiceImpl(memberRepository());
     }
 
-    public OrderService orderService(DiscountMethod discountMethod) {
-        return new OrderServiceImpl(memberRepository(), discountPolicy(discountMethod));
+    @Bean
+    public OrderService orderService() {
+        return new OrderServiceImpl(memberRepository(), discountPolicy());
     }
 }
