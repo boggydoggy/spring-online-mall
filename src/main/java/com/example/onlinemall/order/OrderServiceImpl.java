@@ -1,5 +1,7 @@
 package com.example.onlinemall.order;
 
+import org.springframework.stereotype.Component;
+
 import com.example.onlinemall.discount.DiscountMethod;
 import com.example.onlinemall.discount.DiscountPolicy;
 import com.example.onlinemall.discount.FixedDiscountPolicy;
@@ -8,6 +10,7 @@ import com.example.onlinemall.member.Member;
 import com.example.onlinemall.member.MemberRepository;
 import com.example.onlinemall.member.MemoryMemberRepository;
 
+@Component
 public class OrderServiceImpl implements OrderService {
     private final MemberRepository memberRepository;
     private final DiscountPolicy discountPolicy;
