@@ -1,5 +1,7 @@
 package com.example.onlinemall.autoscan;
 
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,8 @@ import com.example.onlinemall.member.MemberRepository;
 import com.example.onlinemall.member.MemberService;
 import com.example.onlinemall.order.Order;
 import com.example.onlinemall.order.OrderService;
+
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -48,6 +52,22 @@ public class AutoScanTest {
 		Assertions.assertThat(primaryServiceOrder.getDiscountPrice()).isEqualTo(2000);
 		Assertions.assertThat(qualifierServiceOrder.getDiscountPrice()).isEqualTo(1000);
 	}
+	
+	@Test
+	@DisplayName("Choose one of several Discount Policies")
+	void getAllDiscountPolicy() {
+		Member testMember = new Member(1L, "tester", Grade.VIP);
+		ac.getBean(MemberService.class).join(testMember);
+		
+		Order fixServiceOrder = ac.getBean(OrderService3.class).createOrder(1L, "item3", 20000, "fixedDiscountPolicy");
+		Order rateServciOrder = ac.getBean(OrderService3.class).createOrder(1L, "item3", 20000, "rateDiscountPolicy");
+		
+		System.out.println("fixServiceOrder = " + fixServiceOrder);
+		System.out.println("rateServiceOrder = " + rateServciOrder);
+		
+		Assertions.assertThat(fixServiceOrder.getDiscountPrice()).isEqualTo(1000);
+		Assertions.assertThat(rateServciOrder.getDiscountPrice()).isEqualTo(2000);
+	}
 
 	@Component
 	static class OrderService1 implements OrderService {
@@ -74,7 +94,7 @@ public class AutoScanTest {
 		private MemberRepository memberRepository;
 		private DiscountPolicy discountPolicy;
 		
-		@Autowired
+		//@Autowired (optional)
 		public OrderService2(MemberRepository memberRepository, @SubDiscountPolicy DiscountPolicy discountPolicy) {
 			this.memberRepository = memberRepository;
 			this.discountPolicy = discountPolicy;
@@ -87,5 +107,19 @@ public class AutoScanTest {
 			return new Order(memberId, itemName, itemPrice, discountPrice);
 		}
 		
+	}
+	
+	@Component
+	@RequiredArgsConstructor
+	static class OrderService3{
+		private final MemberRepository memberRepository;
+		private final Map<String, DiscountPolicy> discountPolicyMap;
+		
+		public Order createOrder(Long memberId, String itemName, int itemPrice, String policyName) {
+			Member member = memberRepository.findById(memberId);
+			DiscountPolicy discountPolicy = discountPolicyMap.get(policyName);
+			int discountPrice = discountPolicy.discount(member, itemPrice);
+			return new Order(memberId, itemName, itemPrice, discountPrice);
+		}
 	}
 }

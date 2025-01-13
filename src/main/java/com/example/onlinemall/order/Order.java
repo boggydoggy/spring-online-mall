@@ -1,5 +1,8 @@
 package com.example.onlinemall.order;
 
+import lombok.Getter;
+
+@Getter
 public class Order {
     private Long memberId;
     private String itemName;
@@ -11,22 +14,6 @@ public class Order {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
         this.discountPrice = discountPrice;
-    }
-
-    public Long getMemberId() {
-        return memberId;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public int getItemPrice() {
-        return itemPrice;
-    }
-
-    public int getDiscountPrice() {
-        return discountPrice;
     }
 
     public int calculatePrice() {
