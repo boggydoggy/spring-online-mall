@@ -1,9 +1,8 @@
 package com.example.onlinemall;
 
-import com.example.onlinemall.discount.DiscountMethod;
+
 import com.example.onlinemall.discount.DiscountPolicy;
 import com.example.onlinemall.discount.FixedDiscountPolicy;
-import com.example.onlinemall.discount.RateDiscountPolicy;
 import com.example.onlinemall.member.MemberRepository;
 import com.example.onlinemall.member.MemberService;
 import com.example.onlinemall.member.MemberServiceImpl;
